@@ -26,18 +26,20 @@ in
   # ---------------------------------------------------------------------
   # パッケージ管理
   # ---------------------------------------------------------------------
-  home.packages = with pkgs; [
-    git
-    git-secrets
-    devenv
-    awscli2
-  ];
-  # Macのみ (Darwin) 追加分
-  ++ (pkgs.lib.optionals isDarwin [
-  ])
-  # WSLのみ (Linux) 追加分
-  ++ (pkgs.lib.optionals (!isDarwin) [
-  ]);
+  home.packages = with pkgs; (
+    [
+      git
+      git-secrets
+      devenv
+      awscli2
+    ];
+    # Macのみ (Darwin) 追加分
+    ++ (pkgs.lib.optionals isDarwin [
+    ])
+    # WSLのみ (Linux) 追加分
+    ++ (pkgs.lib.optionals (!isDarwin) [
+    ]);
+  );
 
   # ---------------------------------------------------------------------
   # Git 設定
