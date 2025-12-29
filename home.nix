@@ -1,14 +1,24 @@
 { config, pkgs, ... }:
 
+let
+  isDarwin = pkgs.stdenv.isDarwin;
+  # Macなら "mac", Linux(WSL)なら "wsl" という文字を入れる
+  flakeTarget = if isDarwin then "mac" else "wsl";
+
+  configDir = "${config.home.homeDirectory}/.config/home-manager";
+  homePrefix = if isDarwin then "/Users" else "/home";
+in
+
 {
   home.username = "raiha";
-  home.homeDirectory = "/home/raiha";
+  home.homeDirectory = "${homePrefix}/raiha";
 
   home.stateVersion = "25.11"; # Please read the comment before changing.
 
   # environment.
   home.packages = with pkgs; [
     git
+    git-secrets
     devenv
   ];
 
@@ -21,8 +31,23 @@
       };
       init = {
         defaultBranch = "main";
+        templateDir = "${config.home.homeDirectory}/.git-templates/git-secrets";
       };
       pull.rebase = true;
+
+      secrets = {
+        providers = "git secrets --aws-provider";
+        patterns = [
+          "(A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}"
+          "(\"|')?(AWS|aws|Aws)?_?(SECRET|secret|Secret)?_?(ACCESS|access|Access)?_?(KEY|key|Key)(\"|')?\\s*(:|=>|=)\\s*(\"|')?[A-Za-z0-9/\\+=]{40}(\"|')?"
+          "(\"|')?(AWS|aws|Aws)?_?(ACCOUNT|account|Account)_?(ID|id|Id)?(\"|')?\\s*(:|=>|=)\\s*(\"|')?[0-9]{4}\\-?[0-9]{4}\\-?[0-9]{4}(\"|')?"
+        ];
+
+        allowed = [
+          "AKIAIOSFODNN7EXAMPLE"
+          "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+        ];
+      };
     };
   };
 
@@ -35,7 +60,7 @@
     
     shellAliases = {
       ll = "ls -la";
-      update = "home-manager switch";
+      update = "home-manager switch --flake ${configDir}#${flakeTarget}";
     };
     
     initContent = ''
