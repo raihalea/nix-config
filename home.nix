@@ -35,10 +35,12 @@ in
     ]
     # Macのみ (Darwin) 追加分
     ++ (pkgs.lib.optionals isDarwin [
+      # 追加パッケージ
     ])
     # WSLのみ (Linux) 追加分
     ++ (pkgs.lib.optionals (!isDarwin) [
-    ]);
+      # 追加パッケージ
+    ])
   );
 
   # ---------------------------------------------------------------------
