@@ -21,7 +21,7 @@
     onActivation = {
       autoUpdate = true;       # 更新するか
       upgrade = true;          # アップグレードするか
-      # cleanup = "zap";       # 記述にないアプリを自動削除したい場合は "zap" にする (最初はコメントアウト推奨)
+      cleanup = "zap";       # 記述にないアプリを自動削除したい場合は "zap" にする (最初はコメントアウト推奨)
     };
 
     casks = [
