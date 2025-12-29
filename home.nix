@@ -1,27 +1,41 @@
 { config, pkgs, ... }:
 
 let
+  # OS判定
   isDarwin = pkgs.stdenv.isDarwin;
-  # Macなら "mac", Linux(WSL)なら "wsl" という文字を入れる
-  flakeTarget = if isDarwin then "mac" else "wsl";
-
-  configDir = "${config.home.homeDirectory}/.config/home-manager";
+  username = "raiha";
   homePrefix = if isDarwin then "/Users" else "/home";
+  
+  # 設定ファイルの場所
+  configDir = "${homePrefix}/${username}/.config/home-manager";
+
+  # Applyコマンドの自動分岐
+  # Mac: nix-darwin を使用
+  # WSL: home-manager を使用
+  applyCommand = if isDarwin 
+    then "sudo nix run nix-darwin -- switch --flake ${configDir}" 
+    else "home-manager switch --flake ${configDir}";
+
 in
-
 {
-  home.username = "raiha";
-  home.homeDirectory = "${homePrefix}/raiha";
+  # 基本設定
+  home.username = username;
+  home.homeDirectory = "${homePrefix}/${username}";
+  home.stateVersion = "24.05";
 
-  home.stateVersion = "25.11"; # Please read the comment before changing.
-
-  # environment.
+  # ---------------------------------------------------------------------
+  # パッケージ管理
+  # ---------------------------------------------------------------------
   home.packages = with pkgs; [
     git
     git-secrets
     devenv
+    awscli2
   ];
 
+  # ---------------------------------------------------------------------
+  # Git 設定
+  # ---------------------------------------------------------------------
   programs.git = {
     enable = true;
     settings = {
@@ -42,7 +56,6 @@ in
           "(\"|')?(AWS|aws|Aws)?_?(SECRET|secret|Secret)?_?(ACCESS|access|Access)?_?(KEY|key|Key)(\"|')?\\s*(:|=>|=)\\s*(\"|')?[A-Za-z0-9/\\+=]{40}(\"|')?"
           "(\"|')?(AWS|aws|Aws)?_?(ACCOUNT|account|Account)_?(ID|id|Id)?(\"|')?\\s*(:|=>|=)\\s*(\"|')?[0-9]{4}\\-?[0-9]{4}\\-?[0-9]{4}(\"|')?"
         ];
-
         allowed = [
           "AKIAIOSFODNN7EXAMPLE"
           "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
@@ -51,7 +64,9 @@ in
     };
   };
 
-  # zsh設定
+  # ---------------------------------------------------------------------
+  # Zsh 設定
+  # ---------------------------------------------------------------------
   programs.zsh = {
     enable = true;
     enableCompletion = true;
@@ -60,15 +75,33 @@ in
     
     shellAliases = {
       ll = "ls -la";
-      update = "home-manager switch --flake ${configDir}#${flakeTarget}";
+      
+      # 設定変更を反映する (Mac/WSL自動判別)
+      hm-apply = applyCommand;
+      
+      # パッケージを更新して反映する
+      hm-update = "nix flake update --flake ${configDir} && ${applyCommand}";
+      
+      # ゴミ掃除
+      hm-clean = "nix-collect-garbage -d";
     };
     
+    # 起動時のスクリプト
     initContent = ''
       export EDITOR=vim
+      
+      # Homebrewの設定 (Mac用)
+      if [ -f "/opt/homebrew/bin/brew" ]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+      elif [ -f "/usr/local/bin/brew" ]; then
+        eval "$(/usr/local/bin/brew shellenv)"
+      fi
     '';
   };
 
-  # Bashの設定 (WSLでZshを起動するためだけに使用)
+  # ---------------------------------------------------------------------
+  # Bash WSL用
+  # ---------------------------------------------------------------------
   programs.bash = {
     enable = true;
     initExtra = ''
@@ -78,32 +111,25 @@ in
     '';
   };
 
-  # Starshipの設定
+  # ---------------------------------------------------------------------
+  # Starship
+  # ---------------------------------------------------------------------
   programs.starship = {
     enable = true;
-    
-    # zshとの統合を有効化
     enableZshIntegration = true;
 
     settings = {
-      # 1. 全体のフォーマット設定
-      # 左側に表示する項目
       format = "$directory$git_branch$git_status$nix_shell$package$fill$cmd_duration$line_break$character";
-      # 右側に表示する項目（空の場合は無し）
       right_format = "$time";
-
-      # 行間の空き（見やすくなります）
       add_newline = true;
 
-      # ディレクトリ表示
       directory = {
-        truncation_length = 3; # 長すぎるパスは省略
-        style = "bold blue";   # 青色で強調
+        truncation_length = 3;
+        style = "bold blue";
       };
 
-      # Git設定 (開発に必須)
       git_branch = {
-        symbol = " "; # アイコン
+        symbol = " ";
         style = "bg:none fg:purple"; 
       };
       git_status = {
@@ -111,19 +137,14 @@ in
         format = "[$all_status$ahead_behind]($style) ";
       };
 
-      # Nix Shellの表示
-      # devenv shellに入っている時にアイコンが出ます
       nix_shell = {
         disabled = false;
-        impure_msg = "";
-        pure_msg = "";
-        symbol = " "; # Nixアイコン
+        symbol = " ";
         format = "via [$symbol$state]($style) ";
       };
 
-      # 言語バージョン表示 (ファイルがある時だけ表示)
       package = {
-        disabled = true; # ごちゃつくのが嫌ならtrue。表示したいならfalseへ。
+        disabled = true;
       };
       python = {
         symbol = " ";
@@ -134,29 +155,32 @@ in
         format = "via [$symbol($version )]($style)";
       };
 
-      # コマンド実行時間 (時間がかかった時だけ表示)
       cmd_duration = {
-        min_time = 2000; # 2秒以上かかったら表示
+        min_time = 2000;
         style = "yellow";
       };
 
-      # プロンプトの記号
+      fill = {
+        symbol = " ";
+      };
+
       character = {
         success_symbol = "[❯](bold green)";
         error_symbol = "[❯](bold red)";
       };
       
-      # 右寄せの時間表示 (オプション)
       time = {
         disabled = false;
         format = "[$time]($style)";
-        time_format = "%R"; # 24時間表記 (例: 14:30)
+        time_format = "%R";
         style = "bg:none fg:grey";
       };
     };
   };
 
-  # direnv の設定 (devenvとの連携に必須)
+  # ---------------------------------------------------------------------
+  # Direnv
+  # ---------------------------------------------------------------------
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
@@ -167,6 +191,5 @@ in
     # EDITOR = "vim";
   };
 
-  # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 }
