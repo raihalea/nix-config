@@ -32,6 +32,12 @@ in
     devenv
     awscli2
   ];
+  # Macのみ (Darwin) 追加分
+  ++ (pkgs.lib.optionals isDarwin [
+  ])
+  # WSLのみ (Linux) 追加分
+  ++ (pkgs.lib.optionals (!isDarwin) [
+  ]);
 
   # ---------------------------------------------------------------------
   # Git 設定
