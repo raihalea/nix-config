@@ -34,6 +34,7 @@ in
       awscli2
       uv
       nodejs_24
+      hackgen-nf-font
     ]
     # Macのみ (Darwin) 追加分
     ++ (pkgs.lib.optionals isDarwin [
