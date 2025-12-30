@@ -32,6 +32,8 @@ in
       git-secrets
       devenv
       awscli2
+      uv
+      nodejs_24
     ]
     # Macのみ (Darwin) 追加分
     ++ (pkgs.lib.optionals isDarwin [
