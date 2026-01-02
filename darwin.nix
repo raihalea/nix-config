@@ -14,6 +14,8 @@
     home = "/Users/raiha";
   };
 
+  security.pam.services.sudo_local.touchIdAuth = true;
+
   homebrew = {
     enable = true;
     
