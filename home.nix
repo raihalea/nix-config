@@ -30,6 +30,7 @@ in
     [
       git
       git-secrets
+      gh
       devenv
       awscli2
       uv
