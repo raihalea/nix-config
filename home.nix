@@ -13,8 +13,8 @@ let
   # Mac: nix-darwin を使用
   # WSL: home-manager を使用
   applyCommand = if isDarwin 
-    then "sudo nix run nix-darwin -- switch --flake ${configDir}" 
-    else "home-manager switch --flake ${configDir}";
+    then "sudo nix run nix-darwin -- switch --flake ${configDir}#raiha" 
+    else "home-manager switch --flake ${configDir}"#wsl;
 
 in
 {
