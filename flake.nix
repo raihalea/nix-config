@@ -13,22 +13,18 @@
   };
 
   outputs = inputs@{ self, nixpkgs, home-manager, darwin, ... }: {
-    
+
     # ---------------------------------------------------------------
     # 1. WSL用設定 (Home Manager Standalone)
     # コマンド: home-manager switch --flake .#wsl
     # ---------------------------------------------------------------
     homeConfigurations."wsl" = home-manager.lib.homeManagerConfiguration {
       pkgs = nixpkgs.legacyPackages."x86_64-linux";
-      modules = [ 
-        ./home.nix 
+      modules = [
+        ./home.nix
+        ./modules/common
+        ./modules/wsl
       ];
-    };
-
-    # (一応残しておきますが、Macは下のdarwinConfigurationsを使います)
-    homeConfigurations."mac" = home-manager.lib.homeManagerConfiguration {
-      pkgs = nixpkgs.legacyPackages.aarch64-darwin; 
-      modules = [ ./home.nix ];
     };
 
     # ---------------------------------------------------------------
@@ -38,17 +34,21 @@
     darwinConfigurations."raiha" = darwin.lib.darwinSystem {
       system = "aarch64-darwin";
       modules = [
-        # Mac用の読み込み
         ./darwin.nix
+        ./modules/darwin/homebrew.nix
 
-        # Home Managerをdarwinのモジュールとして読み込む
         home-manager.darwinModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          
-          # home.nixの読み込み
-          home-manager.users."raiha" = import ./home.nix;
+
+          home-manager.users."raiha" = { ... }: {
+            imports = [
+              ./home.nix
+              ./modules/common
+              ./modules/darwin
+            ];
+          };
         }
       ];
     };
