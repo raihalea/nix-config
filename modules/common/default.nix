@@ -14,6 +14,7 @@
     awscli2
     uv
     nodejs_24
+    npm-check-updates
     hackgen-nf-font
   ];
 }
