@@ -5,5 +5,6 @@
     docker
     docker-buildx
     colima
+    ncdu
   ];
 }
