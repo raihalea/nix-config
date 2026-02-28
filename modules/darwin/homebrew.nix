@@ -14,6 +14,7 @@
       "ghostty"
       "zoom"
       "claude-code"
+      "blackhole-2ch"
     ];
 
     masApps = {
