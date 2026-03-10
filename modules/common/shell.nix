@@ -25,6 +25,7 @@ in
 
     initContent = ''
       export EDITOR=vim
+      export PATH="$HOME/.local/bin:$PATH"
 
       # Homebrewの設定 (Mac用)
       if [ -f "/opt/homebrew/bin/brew" ]; then
