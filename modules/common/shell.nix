@@ -27,6 +27,11 @@ in
       export EDITOR=vim
       export PATH="$HOME/.local/bin:$PATH"
 
+      # Vite+ (vp) CLI
+      if [ -d "$HOME/.vite-plus/bin" ]; then
+        export PATH="$HOME/.vite-plus/bin:$PATH"
+      fi
+
       # Homebrewの設定 (Mac用)
       if [ -f "/opt/homebrew/bin/brew" ]; then
         eval "$(/opt/homebrew/bin/brew shellenv)"
