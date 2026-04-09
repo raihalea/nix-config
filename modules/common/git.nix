@@ -1,6 +1,12 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 
 {
+  home.activation.gitSecretsTemplate = config.lib.dag.entryAfter [ "writeBoundary" ] ''
+    if [ ! -d "${config.home.homeDirectory}/.git-templates/git-secrets" ]; then
+      run ${pkgs.git-secrets}/bin/git-secrets --install "${config.home.homeDirectory}/.git-templates/git-secrets"
+    fi
+  '';
+
   programs.git = {
     enable = true;
     settings = {
@@ -13,6 +19,7 @@
         templateDir = "${config.home.homeDirectory}/.git-templates/git-secrets";
       };
       pull.rebase = true;
+      credential.helper = "${pkgs.gh}/bin/gh auth git-credential";
 
       secrets = {
         providers = "git secrets --aws-provider";
