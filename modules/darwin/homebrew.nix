@@ -15,6 +15,7 @@
       "zoom"
       "claude-code"
       "blackhole-2ch"
+      "cmux"
     ];
 
     masApps = {
