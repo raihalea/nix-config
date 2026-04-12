@@ -10,6 +10,14 @@
       cleanup = "zap";
     };
 
+    taps = [
+      "k1Low/tap"
+    ];
+
+    brews = [
+      "k1Low/tap/mo"
+    ];
+
     casks = [
       "ghostty"
       "zoom"
