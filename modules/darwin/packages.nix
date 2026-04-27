@@ -6,5 +6,6 @@
     docker-buildx
     colima
     ncdu
+    sox
   ];
 }
