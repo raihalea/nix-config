@@ -24,6 +24,7 @@
       "claude-code"
       "blackhole-2ch"
       "cmux"
+      "tailscale"
     ];
 
     masApps = {
