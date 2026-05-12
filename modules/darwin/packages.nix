@@ -7,5 +7,6 @@
     colima
     ncdu
     sox
+    tailscale
   ];
 }
