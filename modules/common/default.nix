@@ -10,6 +10,8 @@
     git
     git-secrets
     gh
+    ghq
+    fzf
     devenv
     awscli2
     uv
