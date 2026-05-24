@@ -11,6 +11,7 @@
     git-secrets
     gh
     ghq
+    lazygit
     fzf
     bat
     devenv
