@@ -49,7 +49,7 @@ in
         zle -R -c
       }
       zle -N ghq-fzf
-      bindkey '^g' ghq-fzf
+      bindkey '^]' ghq-fzf
     '';
   };
 
