@@ -12,6 +12,7 @@
     gh
     ghq
     fzf
+    bat
     devenv
     awscli2
     uv
