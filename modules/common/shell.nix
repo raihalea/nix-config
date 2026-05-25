@@ -39,6 +39,11 @@ in
         eval "$(/usr/local/bin/brew shellenv)"
       fi
 
+      # cargo (Rust)
+      if [ -f "$HOME/.cargo/env" ]; then
+        . "$HOME/.cargo/env"
+      fi
+
       # ghq + fzf
       function ghq-fzf() {
         local src=$(ghq list | fzf --preview "bat --color=always --style=header,grid --line-range :80 $(ghq root)/{}/README.*")
