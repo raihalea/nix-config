@@ -25,6 +25,7 @@
       "blackhole-2ch"
       "cmux"
       "tailscale"
+      "windows-app"
     ];
 
     masApps = {

@@ -3,6 +3,7 @@
 {
   nix.enable = false;
 
+
   home-manager.backupFileExtension = "backup";
   programs.zsh.enable = true;
   system.stateVersion = 4;
