@@ -26,6 +26,7 @@
       "cmux"
       "tailscale"
       "windows-app"
+      "antigravity-cli"
     ];
 
     masApps = {
