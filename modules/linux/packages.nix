@@ -5,5 +5,7 @@
     unzip
     jq
     tmux
+    ripgrep
+    ffmpeg
   ];
 }
