@@ -1,5 +1,5 @@
 {
-  description = "Home Manager configuration for WSL, macOS, and Linux servers";
+  description = "Home Manager configuration for WSL, macOS, and NVIDIA DGX Spark";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -28,15 +28,20 @@
     };
 
     # ---------------------------------------------------------------
-    # 2. Linux server用設定 (Home Manager Standalone, aarch64)
+    # 2. NVIDIA DGX Spark (ASUS GX10) 用設定
+    #    (Home Manager Standalone, aarch64)
     # コマンド: home-manager switch --flake .#gx10
+    #
+    # GB10 Grace Blackwell / ARM64 / DGX OS という固有の前提を含むため、
+    # 汎用の Linux サーバーとは分けている。別の Linux を足すときは
+    # ./modules/linux を新設し、共有分をそちらへ移すこと。
     # ---------------------------------------------------------------
     homeConfigurations."gx10" = home-manager.lib.homeManagerConfiguration {
       pkgs = nixpkgs.legacyPackages."aarch64-linux";
       modules = [
         ./home.nix
         ./modules/common
-        ./modules/linux
+        ./modules/gx10
       ];
     };
 
