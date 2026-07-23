@@ -10,6 +10,10 @@
     # nix-darwin
     darwin.url = "github:LnL7/nix-darwin";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
+
+    # herdr (AIエージェント用tmux)
+    # nixpkgs.follows は付けない: 上流のCachixバイナリキャッシュを使うため
+    herdr.url = "github:ogulcancelik/herdr";
   };
 
   outputs = inputs@{ self, nixpkgs, home-manager, darwin, ... }: {
@@ -66,6 +70,7 @@
               ./modules/common
               ./modules/darwin
             ];
+            home.packages = [ inputs.herdr.packages."aarch64-darwin".default ];
           };
         }
       ];
