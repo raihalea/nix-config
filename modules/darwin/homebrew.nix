@@ -20,6 +20,7 @@
 
     casks = [
       "ghostty"
+      "linear"
       "zoom"
       "blackhole-2ch"
       "cmux"
